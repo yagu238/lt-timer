@@ -3,6 +3,7 @@ import useSound from "use-sound";
 import { useRouter } from "next/router";
 import { useState, useEffect, useMemo } from "react";
 import { Header } from "../components/header";
+import slack from "../lib/stack";
 
 const TimeProgress: NextPage = () => {
   const router = useRouter();
@@ -21,7 +22,7 @@ const TimeProgress: NextPage = () => {
         console.log("finite");
         clearInterval(interval);
         playEnd();
-        // slack.sendToSlack("終了です！");
+        slack.sendToSlack("終了です！");
       } else {
         setTimer(t);
       }
