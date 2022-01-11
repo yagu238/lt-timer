@@ -14,15 +14,22 @@ const TimeProgress: NextPage = () => {
   });
 
   const [playEnd] = useSound("/end.mp3");
+  const [playBell] = useSound("/bell.mp3");
 
   useEffect(() => {
     const interval = setInterval(() => {
       const t = countdownTimer(timer);
+      const strBellTimes = belltimes ? getAsString(belltimes) : "";
+      const arrBellTimes = strBellTimes.split(",").map((x) => +x);
       if (t.minutes < 0 || t.seconds < 0) {
         console.log("finite");
         clearInterval(interval);
         playEnd();
         noticeService.noticeToSlack("終了です！お疲れ様でした！");
+      } else if (arrBellTimes.includes(t.minutes) && t.seconds === 0) {
+        console.log("playBell");
+        playBell();
+        setTimer(t);
       } else {
         setTimer(t);
       }
@@ -54,6 +61,13 @@ const countdownTimer = (timer: Timer) => {
     seconds: sec % 60,
   };
   return nextTimer;
+};
+
+const getAsString = (value: string | string[]) => {
+  if (Array.isArray(value)) {
+    return value[0];
+  }
+  return value;
 };
 
 export default TimeProgress;
