@@ -48,58 +48,56 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 h-screen">
+    <div className="container mx-auto px-4 h-screen max-w-md">
       <Header />
-      <div>
-        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="time"
-            >
-              開催時間
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="time"
-              type="number"
-              placeholder="10"
-              min={0}
-              value={ltTime || ""}
-              onChange={(e) => changeLtTime(e.target.value)}
-            />
-          </div>
-          {bellTimes.map((bellTime, index) => (
-            <InputControl
-              key={"bell" + (index + 1)}
-              id={"bell" + (index + 1)}
-              label={"ベル" + (index + 1) + "回目"}
-              time={bellTime}
-              onChangeBell={(time) => changeBellTime(index, time)}
-              onDeleteBell={() => deleteBellTime(index)}
-            />
-          ))}
-          <div className="mt-2">
-            <button
-              className="
+      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="time"
+          >
+            開催時間
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="time"
+            type="number"
+            placeholder="10"
+            min={0}
+            value={ltTime || ""}
+            onChange={(e) => changeLtTime(e.target.value)}
+          />
+        </div>
+        {bellTimes.map((bellTime, index) => (
+          <InputControl
+            key={"bell" + (index + 1)}
+            id={"bell" + (index + 1)}
+            label={"ベル" + (index + 1) + "回目"}
+            time={bellTime}
+            onChangeBell={(time) => changeBellTime(index, time)}
+            onDeleteBell={() => deleteBellTime(index)}
+          />
+        ))}
+        <div className="mt-2">
+          <button
+            className="
               w-full inline-flex items-center justify-center h-10 px-5 text-yellow-500 
               border border-yellow-500 duration-150 bg-transparent rounded-lg focus:shadow-outline"
-              onClick={() => setBellTimes(bellTimes.concat([0]))}
-            >
-              <RiBellFill />
-              <span>ベル追加</span>
-            </button>
-          </div>
-          <div className="mt-2">
-            <button
-              className="w-full inline-flex items-center justify-center h-10 px-5 
+            onClick={() => setBellTimes(bellTimes.concat([0]))}
+          >
+            <RiBellFill />
+            <span>ベル追加</span>
+          </button>
+        </div>
+        <div className="mt-2">
+          <button
+            className="w-full inline-flex items-center justify-center h-10 px-5 
                 text-white bg-yellow-500 duration-150 bg-transparent rounded-lg focus:shadow-outline"
-              onClick={handleStartLt}
-            >
-              <RiTimer2Fill />
-              <span>LT 開始</span>
-            </button>
-          </div>
+            onClick={handleStartLt}
+          >
+            <RiTimer2Fill />
+            <span>LT 開始</span>
+          </button>
         </div>
       </div>
       <footer></footer>
