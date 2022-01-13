@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import useSound from "use-sound";
 import { useRouter } from "next/router";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Header } from "../components/header";
 import { noticeService } from "../services/notice";
 
@@ -13,10 +13,16 @@ const TimeProgress: NextPage = () => {
     seconds: 0,
   });
 
-  const [playEnd] = useSound("/end.mp3");
-  const [playBell] = useSound("/bell.mp3");
+  const [playEnd] = useSound<string>("/end.mp3");
+  const [playBell] = useSound<string>("/bell.mp3");
+
+  const [timerInterval, setTimerInterval] = useState<NodeJS.Timer>(
+    setInterval(() => {}, 1000)
+  );
+  const [isProgress, setIsProgress] = useState<boolean>(true);
 
   useEffect(() => {
+    if (timer.minutes === 0 && timer.seconds === 0) return;
     const interval = setInterval(() => {
       const t = countdownTimer(timer);
       const strBellTimes = belltimes ? getAsString(belltimes) : "";
@@ -34,16 +40,52 @@ const TimeProgress: NextPage = () => {
         setTimer(t);
       }
     }, 1000);
+
+    setTimerInterval(interval);
     return () => clearInterval(interval);
-  }, [playEnd, timer]);
+  }, [belltimes, playBell, playEnd, timer]);
+
+  const hundlePause = useCallback(
+    (isProgress: boolean) => {
+      if (isProgress) {
+        clearInterval(timerInterval);
+        setIsProgress(false);
+      } else {
+        setTimeout(() => {
+          setTimer(countdownTimer(timer));
+          setIsProgress(true);
+        }, 300);
+      }
+    },
+    [timer, timerInterval]
+  );
 
   return (
     <div className="container mx-auto px-4 h-screen">
       <Header />
       <div>
-        <h1 className="text-4xl flex justify-center items-center p-4">
+        <h1 className="text-9xl flex justify-center items-center p-4">
           {timer.minutes}:{timer.seconds}
         </h1>
+        <div className="flex mt-32 max-w-sm mx-auto px-4">
+          <button
+            className="rounded-full bg-white hover:bg-gray-100 text-gray-600 font-semibold border border-gray-400 shadow py-6 px-1"
+            onClick={() => router.back()}
+          >
+            キャンセル
+          </button>
+          <div className="flex-1"></div>
+          <button
+            className={
+              isProgress
+                ? "rounded-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold border border-gray-400 shadow py-6 px-1"
+                : "rounded-full bg-teal-600 hover:bg-teal-700 text-white font-semibold border border-gray-400 shadow py-6 px-1"
+            }
+            onClick={() => hundlePause(isProgress)}
+          >
+            {isProgress ? "一時停止" : "　再開　"}
+          </button>
+        </div>
       </div>
     </div>
   );
