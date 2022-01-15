@@ -1,19 +1,17 @@
 import type { NextPage } from "next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useCallback, useState } from "react";
-import { RiTimerFlashLine, RiBellFill, RiTimer2Fill } from "react-icons/ri";
+import { RiBellFill, RiTimer2Fill } from "react-icons/ri";
 import { Header } from "../components/header";
 import { InputControl } from "../components/input-control";
-import { Bell } from "../models/bell.interface";
 
 const Home: NextPage = () => {
-  const [ltTime, setLtTime] = useState<number | undefined>();
+  const [ltMinutes, setLtMinutes] = useState<number | undefined>();
   const [bellTimes, setBellTimes] = useState<(number | undefined)[]>([]);
 
   // LT時間変更
   const changeLtTime = useCallback((value: string) => {
-    setLtTime(value ? +value : undefined);
+    setLtMinutes(value ? +value : undefined);
   }, []);
 
   // ベルのタイミング変更
@@ -38,10 +36,11 @@ const Home: NextPage = () => {
 
   const router = useRouter();
   const handleStartLt = () => {
+    if (!ltMinutes) return;
     router.push({
       pathname: "/time-progress",
       query: {
-        lttime: ltTime,
+        ltSeconds: ltMinutes * 60,
         belltimes: bellTimes.map((x) => x + "").join(","),
       },
     });
@@ -64,7 +63,7 @@ const Home: NextPage = () => {
             type="number"
             placeholder="10"
             min={0}
-            value={ltTime || ""}
+            value={ltMinutes || ""}
             onChange={(e) => changeLtTime(e.target.value)}
           />
         </div>
